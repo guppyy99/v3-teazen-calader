@@ -33,8 +33,27 @@ export function AIInsight({ selectedYear, selectedMonth, keywordData }: AIInsigh
       const top = growthData[0]
       setTopKeyword(top.keyword)
 
+      // 최근 6개월 데이터 추출
+      const keywordInfo = keywordData[top.keyword]
+      const previousMonths = []
+      
+      if (keywordInfo) {
+        for (let i = 5; i >= 0; i--) {
+          const targetDate = new Date(selectedYear, selectedMonth - 1)
+          targetDate.setMonth(targetDate.getMonth() - i)
+          
+          const monthKey = `${targetDate.getFullYear()}-${String(targetDate.getMonth() + 1).padStart(2, '0')}`
+          const volume = keywordInfo.monthlyData[monthKey] || 0
+          
+          previousMonths.push({
+            month: `${targetDate.getFullYear()}.${String(targetDate.getMonth() + 1).padStart(2, '0')}`,
+            volume: volume
+          })
+        }
+      }
+
       try {
-        // GPT API 호출
+        // GPT API 호출 (실제 검색 데이터 포함)
         const response = await fetch('/api/ai-insight', {
           method: 'POST',
           headers: {
@@ -46,6 +65,7 @@ export function AIInsight({ selectedYear, selectedMonth, keywordData }: AIInsigh
             volume: top.volume,
             year: selectedYear,
             month: selectedMonth,
+            previousMonths: previousMonths,
           }),
         })
 
@@ -53,17 +73,23 @@ export function AIInsight({ selectedYear, selectedMonth, keywordData }: AIInsigh
           const data = await response.json()
           setInsight(data.insight)
         } else {
-          // API 호출 실패 시 기본 인사이트
+          // API 호출 실패 시 실제 데이터 기반 기본 인사이트
+          const trend = previousMonths.length >= 2 
+            ? previousMonths[previousMonths.length - 1].volume > previousMonths[previousMonths.length - 2].volume 
+              ? '상승세' 
+              : '하락세'
+            : '변동'
+          
           setInsight(
-            `${selectedMonth}월 '${top.keyword}'의 검색량이 평균 대비 ${Math.abs(Math.round(top.growth))}% ${top.growth > 0 ? '상승' : '하락'}했습니다. ${top.volume.toLocaleString()}건의 검색이 발생했으며, 계절적 요인 또는 마케팅 활동의 영향으로 분석됩니다.`
+            `검색량이 ${top.volume.toLocaleString()}건으로 평균 대비 ${Math.abs(Math.round(top.growth))}% ${top.growth > 0 ? '상승' : '하락'}했습니다. 최근 ${trend}를 보이고 있으며, 계절적 요인이나 이벤트의 영향으로 분석됩니다.`
           )
         }
       } catch (error) {
         console.error('AI 인사이트 생성 오류:', error)
-        // 오류 발생 시 기본 인사이트
+        // 오류 발생 시 실제 데이터 기반 기본 인사이트
         const top = growthData[0]
         setInsight(
-          `${selectedMonth}월 '${top.keyword}'의 검색량이 평균 대비 ${Math.abs(Math.round(top.growth))}% ${top.growth > 0 ? '상승' : '하락'}했습니다. ${top.volume.toLocaleString()}건의 검색이 발생했습니다.`
+          `검색량이 ${top.volume.toLocaleString()}건으로 평균 대비 ${Math.abs(Math.round(top.growth))}% ${top.growth > 0 ? '상승' : '하락'}했습니다. 실제 검색 데이터를 기반으로 분석되었습니다.`
         )
       } finally {
         setLoading(false)

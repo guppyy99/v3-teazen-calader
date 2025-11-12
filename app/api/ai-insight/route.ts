@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 
 export async function POST(request: Request) {
   try {
-    const { keyword, growth, volume, year, month } = await request.json()
+    const { keyword, growth, volume, year, month, monthlyData, previousMonths } = await request.json()
     
     const apiKey = process.env.OPENAI_API_KEY
     
@@ -13,22 +13,30 @@ export async function POST(request: Request) {
       )
     }
     
-    const prompt = `당신은 키워드 검색 트렌드 분석 전문가입니다. 
+    // 월별 검색량 추이 문자열 생성
+    const trendText = previousMonths?.map((m: any) => `${m.month}: ${m.volume.toLocaleString()}건`).join(', ') || ''
     
-다음 데이터를 바탕으로 검색량 급증 원인을 분석해주세요:
+    const prompt = `당신은 네이버, 구글 등 포털 검색 데이터를 분석하는 마케팅 전문가입니다.
 
-- 키워드: ${keyword}
-- 시점: ${year}년 ${month}월
-- 평균 대비 상승률: ${growth.toFixed(1)}%
-- 검색량: ${volume.toLocaleString()}
+아래는 실제 포털 검색 데이터입니다:
 
-분석 요구사항:
-1. 해당 시점에 검색량이 급증한 가능성이 높은 원인을 구체적으로 설명해주세요
-2. 계절적 요인, 이벤트, 마케팅 활동 등을 고려해주세요
-3. 2-3문장으로 간결하게 작성해주세요
-4. "~것으로 예상됩니다" 또는 "~것으로 분석됩니다" 형식으로 마무리해주세요
+**키워드**: ${keyword}
+**분석 시점**: ${year}년 ${month}월
+**현재 월 검색량**: ${volume.toLocaleString()}건
+**평균 대비 상승률**: ${growth > 0 ? '+' : ''}${growth.toFixed(1)}%
 
-답변 형식: "${month}월 ${keyword}의 검색량이 평균 대비 ${Math.abs(Math.round(growth))}% 상승했습니다. [원인 분석]"`
+**최근 6개월 검색량 추이**:
+${trendText}
+
+**분석 지침**:
+1. 위 실제 검색 데이터를 기반으로 ${month}월에 검색량이 ${growth > 0 ? '급증' : '감소'}한 원인을 분석하세요
+2. 계절적 요인, 사회적 이벤트, 마케팅 활동, 트렌드 변화 등을 고려하세요
+3. 구체적인 숫자와 데이터를 언급하여 신뢰성을 높이세요
+4. 2-3문장으로 간결하고 명확하게 작성하세요
+5. 전문적이지만 이해하기 쉬운 언어를 사용하세요
+
+**답변 형식**: 
+검색량이 ${volume.toLocaleString()}건으로 평균 대비 ${Math.abs(Math.round(growth))}% ${growth > 0 ? '상승' : '하락'}했습니다. [구체적인 원인 분석 2-3문장]`
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -37,19 +45,19 @@ export async function POST(request: Request) {
         'Authorization': `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: 'gpt-4o',
         messages: [
           {
             role: 'system',
-            content: '당신은 키워드 검색 트렌드를 분석하는 마케팅 전문가입니다. 간결하고 명확하게 답변해주세요.',
+            content: '당신은 네이버, 구글 등 포털 검색 데이터를 분석하는 시니어 마케팅 애널리스트입니다. 실제 데이터를 기반으로 정확하고 통찰력 있는 분석을 제공하며, 구체적인 숫자와 트렌드를 언급하여 신뢰성을 높입니다.',
           },
           {
             role: 'user',
             content: prompt,
           },
         ],
-        temperature: 0.7,
-        max_tokens: 300,
+        temperature: 0.8,
+        max_tokens: 400,
       }),
     })
     
