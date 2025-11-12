@@ -146,13 +146,24 @@ ${webSearchResults ? `\n# 실제 웹 검색 결과 (네이버/구글 최신 정�
     }
     
     const data = await response.json()
+    console.log('✅ OpenAI 응답 성공:', data)
+    
     const insight = data.choices[0]?.message?.content || '인사이트를 생성할 수 없습니다.'
     
     return NextResponse.json({ insight })
-  } catch (error) {
-    console.error('AI 인사이트 생성 중 오류:', error)
+  } catch (error: any) {
+    console.error('❌ AI 인사이트 생성 중 오류:', error)
+    console.error('에러 상세:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name
+    })
+    
     return NextResponse.json(
-      { error: 'AI 인사이트 생성에 실패했습니다.' },
+      { 
+        error: `AI 인사이트 생성 실패: ${error.message || '알 수 없는 오류'}`,
+        details: error.toString()
+      },
       { status: 500 }
     )
   }
