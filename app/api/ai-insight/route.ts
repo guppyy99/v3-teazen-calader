@@ -112,7 +112,7 @@ ${webSearchResults ? `\n# 실제 웹 검색 결과 (네이버/구글 최신 정�
         'Authorization': `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'gpt-5',
+        model: 'gpt-4o',
         messages: [
           {
             role: 'system',
@@ -135,8 +135,7 @@ ${webSearchResults ? `\n# 실제 웹 검색 결과 (네이버/구글 최신 정�
             content: prompt,
           },
         ],
-        reasoning_effort: 'high',
-        verbosity: 'medium',
+        temperature: 0.8,
         max_tokens: 600,
       }),
     })
