@@ -57,6 +57,7 @@ export function CalendarHeader({ year, month, onYearChange, onMonthChange }: Cal
                 size="icon"
                 className="h-8 w-8 rounded-full hover:bg-gray-100"
                 onClick={() => onYearChange(year + 1)}
+                disabled={year >= 2025}
               >
                 <ChevronRight className="h-4 w-4" />
               </Button>

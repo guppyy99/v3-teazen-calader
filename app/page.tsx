@@ -35,8 +35,8 @@ export default function Page() {
       const top = growthData.slice(0, 20).map(item => item.keyword)
       setTopKeywords(top)
       
-      // 초기 선택 키워드 설정 (상위 2개)
-      if (selectedKeywords.length === 0 && top.length >= 2) {
+      // 월이 변경될 때마다 상위 2개로 초기화
+      if (top.length >= 2) {
         setSelectedKeywords([top[0], top[1]])
       }
     }

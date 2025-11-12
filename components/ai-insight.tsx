@@ -1,6 +1,5 @@
 "use client"
 
-import { Sparkles } from "lucide-react"
 import { useEffect, useState } from "react"
 import { calculateMonthlyGrowth } from "@/lib/csv-parser"
 import type { KeywordData } from "@/lib/types"
@@ -83,16 +82,20 @@ export function AIInsight({ selectedYear, selectedMonth, keywordData }: AIInsigh
           <div className="h-full w-full rounded-full bg-white" />
         </div>
         <div className="relative flex flex-col items-center gap-3">
-          <Sparkles className="h-5 w-5 flex-shrink-0 text-purple-600" />
           {loading ? (
             <div className="flex items-center gap-2">
               <div className="h-4 w-4 animate-spin rounded-full border-2 border-purple-600 border-t-transparent" />
               <p className="text-sm text-gray-600">AI 인사이트 생성 중...</p>
             </div>
           ) : (
-            <p className="text-sm leading-relaxed text-gray-800 text-center">
-              <span className="font-semibold">{topKeyword}</span> {insight}
-            </p>
+            <div className="text-center">
+              <p className="text-base font-bold text-gray-900 mb-2">
+                "{topKeyword}" 상승폭 가장 높음
+              </p>
+              <p className="text-sm leading-relaxed text-gray-700">
+                {insight}
+              </p>
+            </div>
           )}
         </div>
       </div>

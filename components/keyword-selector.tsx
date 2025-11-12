@@ -45,7 +45,7 @@ export function KeywordSelector({
 
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-      <h3 className="mb-4 text-lg font-medium text-gray-700">Keyword</h3>
+      <h3 className="mb-4 text-lg font-medium text-gray-700 text-center">Keyword</h3>
       <div className="max-h-[600px] overflow-y-auto pr-2 space-y-2">
         {displayKeywords.map((keyword, index) => {
           const isSelected = selectedKeywords.includes(keyword)
