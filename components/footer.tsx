@@ -18,7 +18,7 @@ export function Footer() {
             <img 
               src="/FINFLOW_BLACK.svg" 
               alt="Finflow" 
-              className="h-5 opacity-70 hover:opacity-100 transition-opacity"
+              className="h-3 opacity-70 hover:opacity-100 transition-opacity"
             />
           </div>
 
