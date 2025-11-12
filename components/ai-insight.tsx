@@ -80,25 +80,22 @@ export function AIInsight({ selectedYear, selectedMonth, keywordData }: AIInsigh
 
       if (response.ok) {
         const data = await response.json()
+        console.log('✅ AI 인사이트 성공:', data)
         setInsight(data.insight)
       } else {
-        // API 호출 실패 시 실제 데이터 기반 기본 인사이트
-        const trend = previousMonths.length >= 2 
-          ? previousMonths[previousMonths.length - 1].volume > previousMonths[previousMonths.length - 2].volume 
-            ? '상승세' 
-            : '하락세'
-          : '변동'
+        const errorData = await response.json()
+        console.error('❌ AI API 호출 실패:', response.status, errorData)
         
+        // API 호출 실패 시 에러 메시지 표시
         setInsight(
-          `검색량이 ${top.volume.toLocaleString()}건으로 평균 대비 ${Math.abs(Math.round(top.growth))}% ${top.growth > 0 ? '상승' : '하락'}했습니다. 최근 ${trend}를 보이고 있으며, 계절적 요인이나 이벤트의 영향으로 분석됩니다.`
+          `⚠️ AI 인사이트 생성 실패: ${errorData.error || '알 수 없는 오류'}. 환경변수(OPENAI_API_KEY)를 확인해주세요.`
         )
       }
-    } catch (error) {
-      console.error('AI 인사이트 생성 오류:', error)
-      // 오류 발생 시 실제 데이터 기반 기본 인사이트
-      const top = growthData[0]
+    } catch (error: any) {
+      console.error('❌ AI 인사이트 생성 중 네트워크 오류:', error)
+      // 오류 발생 시 에러 메시지 표시
       setInsight(
-        `검색량이 ${top.volume.toLocaleString()}건으로 평균 대비 ${Math.abs(Math.round(top.growth))}% ${top.growth > 0 ? '상승' : '하락'}했습니다. 실제 검색 데이터를 기반으로 분석되었습니다.`
+        `⚠️ 네트워크 오류: ${error.message}. API 서버 연결을 확인해주세요.`
       )
     } finally {
       setLoading(false)
