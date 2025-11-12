@@ -106,10 +106,16 @@ export function AIInsight({ selectedYear, selectedMonth, keywordData }: AIInsigh
   }
 
   return (
-    <div className="mt-6">
-      {!hasGenerated ? (
-        // 인사이트 생성 버튼
-        <div className="flex justify-center">
+    <div className="mt-6 flex justify-center">
+      <div 
+        className={`relative overflow-hidden transition-all duration-700 ease-in-out ${
+          hasGenerated 
+            ? 'w-full rounded-full' 
+            : 'w-auto rounded-full'
+        }`}
+      >
+        {!hasGenerated ? (
+          // 인사이트 생성 버튼
           <button
             onClick={generateInsight}
             disabled={loading || Object.keys(keywordData).length === 0}
@@ -118,7 +124,6 @@ export function AIInsight({ selectedYear, selectedMonth, keywordData }: AIInsigh
             {/* 기본 그라데이션 (부드러운 색상) */}
             <div 
               className="absolute inset-0 bg-gradient-to-r from-[#F2B0ED] to-[#CAB2F4] transition-opacity duration-500"
-              style={{ opacity: 1 }}
             />
             
             {/* 호버 그라데이션 (쨍한 색상) */}
@@ -129,43 +134,48 @@ export function AIInsight({ selectedYear, selectedMonth, keywordData }: AIInsigh
             <Sparkles className="h-5 w-5 relative z-10 group-hover:rotate-12 transition-transform duration-300" />
             <span className="relative z-10">{selectedMonth}월 인사이트 생성</span>
           </button>
-        </div>
-      ) : (
-        // 인사이트 결과 표시
-        <div className="rounded-full bg-white px-6 py-5 relative overflow-hidden">
-          {/* 그라데이션 테두리 */}
-          <div className="absolute inset-0 rounded-full p-[2px] bg-gradient-to-r from-[#F2B0ED] to-[#CAB2F4]">
-            <div className="h-full w-full rounded-full bg-white" />
+        ) : (
+          // 인사이트 결과 표시 (버튼에서 확장되는 애니메이션)
+          <div className="w-full bg-white px-6 py-5 relative rounded-full">
+            {/* 그라데이션 테두리 */}
+            <div className="absolute inset-0 rounded-full p-[2px] bg-gradient-to-r from-[#F2B0ED] to-[#CAB2F4]">
+              <div className="h-full w-full rounded-full bg-white" />
+            </div>
+            
+            <div 
+              className={`relative flex flex-col items-center gap-3 transition-opacity duration-500 ${
+                loading ? 'opacity-100' : 'opacity-100'
+              }`}
+            >
+              {loading ? (
+                <div className="flex items-center gap-2 animate-in fade-in duration-300">
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-purple-600 border-t-transparent" />
+                  <p className="text-sm text-gray-600">AI 인사이트 생성 중...</p>
+                </div>
+              ) : (
+                <div className="text-center animate-in fade-in duration-700">
+                  <p className="text-base font-bold text-gray-900 mb-2">
+                    "{topKeyword}" 상승폭 가장 높음
+                  </p>
+                  <p className="text-sm leading-relaxed text-gray-700">
+                    {insight}
+                  </p>
+                  <button
+                    onClick={() => {
+                      setHasGenerated(false)
+                      setInsight("")
+                      setTopKeyword("")
+                    }}
+                    className="mt-4 text-xs text-purple-600 hover:text-purple-700 underline transition-colors duration-200"
+                  >
+                    다시 생성
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
-          <div className="relative flex flex-col items-center gap-3">
-            {loading ? (
-              <div className="flex items-center gap-2">
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-purple-600 border-t-transparent" />
-                <p className="text-sm text-gray-600">AI 인사이트 생성 중...</p>
-              </div>
-            ) : (
-              <div className="text-center">
-                <p className="text-base font-bold text-gray-900 mb-2">
-                  "{topKeyword}" 상승폭 가장 높음
-                </p>
-                <p className="text-sm leading-relaxed text-gray-700">
-                  {insight}
-                </p>
-                <button
-                  onClick={() => {
-                    setHasGenerated(false)
-                    setInsight("")
-                    setTopKeyword("")
-                  }}
-                  className="mt-4 text-xs text-purple-600 hover:text-purple-700 underline"
-                >
-                  다시 생성
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   )
 }
