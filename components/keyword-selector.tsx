@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import { ChevronDown, TrendingUp, TrendingDown } from "lucide-react"
-import { calculatePreviousMonthGrowth } from "@/lib/csv-parser"
 import type { KeywordData } from "@/lib/types"
 
 interface KeywordSelectorProps {
@@ -12,6 +11,27 @@ interface KeywordSelectorProps {
   keywordData: KeywordData
   selectedYear: number
   selectedMonth: number
+}
+
+// 평균 대비 상승률 계산 (메인 페이지와 동일한 로직)
+function calculateGrowthRate(
+  data: KeywordData[string],
+  year: number,
+  month: number
+): { growth: number; volume: number } {
+  const monthKey = `${year}-${String(month).padStart(2, '0')}`
+  const currentValue = data.monthlyData[monthKey] || 0
+  
+  // 전체 기간의 평균 계산
+  const allValues = Object.values(data.monthlyData).filter(v => v > 0)
+  if (allValues.length === 0) return { growth: 0, volume: 0 }
+  
+  const average = allValues.reduce((sum, val) => sum + val, 0) / allValues.length
+  
+  // 평균 대비 상승폭 계산
+  const growth = ((currentValue - average) / average) * 100
+  
+  return { growth, volume: currentValue }
 }
 
 // 키워드별 색상 팔레트 (차트와 동일하게)
@@ -54,7 +74,7 @@ export function KeywordSelector({
           
           let growthData = { growth: 0, volume: 0 }
           if (keywordInfo) {
-            growthData = calculatePreviousMonthGrowth(keywordInfo, selectedYear, selectedMonth)
+            growthData = calculateGrowthRate(keywordInfo, selectedYear, selectedMonth)
           }
 
           return (
