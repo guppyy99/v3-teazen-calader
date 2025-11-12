@@ -115,17 +115,20 @@ export function AIInsight({ selectedYear, selectedMonth, keywordData }: AIInsigh
           <button
             onClick={generateInsight}
             disabled={loading || Object.keys(keywordData).length === 0}
-            className="flex items-center gap-2 rounded-full bg-gradient-to-r from-purple-500 via-pink-500 to-purple-500 px-6 py-3 text-white font-medium shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="group relative flex items-center gap-2 rounded-full bg-gradient-to-r from-[#F2B0ED] to-[#CAB2F4] px-8 py-3.5 text-white font-semibold shadow-lg hover:shadow-2xl hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 overflow-hidden"
           >
-            <Sparkles className="h-5 w-5" />
-            <span>{selectedMonth}월 인사이트 생성</span>
+            {/* 호버 시 밝기 증가 오버레이 */}
+            <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
+            
+            <Sparkles className="h-5 w-5 relative z-10 group-hover:rotate-12 transition-transform duration-300" />
+            <span className="relative z-10">{selectedMonth}월 인사이트 생성</span>
           </button>
         </div>
       ) : (
         // 인사이트 결과 표시
         <div className="rounded-full bg-white px-6 py-5 relative overflow-hidden">
           {/* 그라데이션 테두리 */}
-          <div className="absolute inset-0 rounded-full p-[2px] bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400">
+          <div className="absolute inset-0 rounded-full p-[2px] bg-gradient-to-r from-[#F2B0ED] to-[#CAB2F4]">
             <div className="h-full w-full rounded-full bg-white" />
           </div>
           <div className="relative flex flex-col items-center gap-3">
