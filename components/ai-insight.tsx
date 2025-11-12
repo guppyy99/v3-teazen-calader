@@ -107,8 +107,6 @@ export function AIInsight({ selectedYear, selectedMonth, keywordData }: AIInsigh
 
   return (
     <div className="mt-6">
-      <h3 className="mb-4 text-xl font-semibold text-gray-800 text-center">AI 인사이트</h3>
-      
       {!hasGenerated ? (
         // 인사이트 생성 버튼
         <div className="flex justify-center">
@@ -116,18 +114,20 @@ export function AIInsight({ selectedYear, selectedMonth, keywordData }: AIInsigh
             onClick={generateInsight}
             disabled={loading || Object.keys(keywordData).length === 0}
             className="group relative flex items-center gap-2 rounded-full px-8 py-3.5 text-white font-semibold shadow-md hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 overflow-hidden"
-            style={{
-              background: 'linear-gradient(to right, #F2B0ED, #CAB2F4)'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'linear-gradient(to right, #E85DD7, #9D7DE8)'
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'linear-gradient(to right, #F2B0ED, #CAB2F4)'
-            }}
           >
-            <Sparkles className="h-5 w-5 group-hover:rotate-12 transition-transform duration-300" />
-            <span>{selectedMonth}월 인사이트 생성</span>
+            {/* 기본 그라데이션 (부드러운 색상) */}
+            <div 
+              className="absolute inset-0 bg-gradient-to-r from-[#F2B0ED] to-[#CAB2F4] transition-opacity duration-500"
+              style={{ opacity: 1 }}
+            />
+            
+            {/* 호버 그라데이션 (쨍한 색상) */}
+            <div 
+              className="absolute inset-0 bg-gradient-to-r from-[#E85DD7] to-[#9D7DE8] opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+            />
+            
+            <Sparkles className="h-5 w-5 relative z-10 group-hover:rotate-12 transition-transform duration-300" />
+            <span className="relative z-10">{selectedMonth}월 인사이트 생성</span>
           </button>
         </div>
       ) : (
