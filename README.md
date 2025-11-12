@@ -35,7 +35,7 @@
 - **언어**: TypeScript
 - **스타일링**: Tailwind CSS
 - **차트**: Recharts
-- **AI**: OpenAI GPT-4o-mini
+- **AI**: OpenAI GPT-5 (최신 Reasoning 모델)
 - **배포**: Vercel
 
 ## 설치 및 실행

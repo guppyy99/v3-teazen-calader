@@ -45,7 +45,7 @@ ${trendText}
         'Authorization': `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'gpt-5',
         messages: [
           {
             role: 'system',
@@ -56,8 +56,9 @@ ${trendText}
             content: prompt,
           },
         ],
-        temperature: 0.8,
-        max_tokens: 400,
+        reasoning_effort: 'medium',
+        verbosity: 'medium',
+        max_tokens: 500,
       }),
     })
     
