@@ -31,7 +31,7 @@ export function Footer() {
           {/* 카피라이트 */}
           <div className="text-center md:text-right">
             <p className="text-xs text-gray-500">
-              © {new Date().getFullYear()} TEAZEN. All rights reserved.
+              © {new Date().getFullYear()} FINFLOW. All rights reserved.
             </p>
           </div>
         </div>
