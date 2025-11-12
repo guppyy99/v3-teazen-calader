@@ -16,27 +16,40 @@ export async function POST(request: Request) {
     // 월별 검색량 추이 문자열 생성
     const trendText = previousMonths?.map((m: any) => `${m.month}: ${m.volume.toLocaleString()}건`).join(', ') || ''
     
-    const prompt = `당신은 네이버, 구글 등 포털 검색 데이터를 분석하는 마케팅 전문가입니다.
+    // 전월 대비 변화율 계산
+    const prevMonthVolume = previousMonths?.[previousMonths.length - 2]?.volume || 0
+    const monthOverMonth = prevMonthVolume > 0 
+      ? ((volume - prevMonthVolume) / prevMonthVolume * 100).toFixed(1)
+      : '0'
+    
+    const prompt = `당신은 마케팅 전략 컨설턴트입니다. 기업이 활용할 수 있는 실질적인 인사이트를 제공하세요.
 
-아래는 실제 포털 검색 데이터입니다:
+# 실제 검색 데이터 분석
 
-**키워드**: ${keyword}
-**분석 시점**: ${year}년 ${month}월
-**현재 월 검색량**: ${volume.toLocaleString()}건
-**평균 대비 상승률**: ${growth > 0 ? '+' : ''}${growth.toFixed(1)}%
+**키워드**: "${keyword}"
+**시점**: ${year}년 ${month}월
+**검색량**: ${volume.toLocaleString()}건
+**평균 대비**: ${growth > 0 ? '+' : ''}${growth.toFixed(1)}%
+**전월 대비**: ${monthOverMonth}%
 
-**최근 6개월 검색량 추이**:
+**최근 6개월 추이**:
 ${trendText}
 
-**분석 지침**:
-1. 위 실제 검색 데이터를 기반으로 ${month}월에 검색량이 ${growth > 0 ? '급증' : '감소'}한 원인을 분석하세요
-2. 계절적 요인, 사회적 이벤트, 마케팅 활동, 트렌드 변화 등을 고려하세요
-3. 구체적인 숫자와 데이터를 언급하여 신뢰성을 높이세요
-4. 2-3문장으로 간결하고 명확하게 작성하세요
-5. 전문적이지만 이해하기 쉬운 언어를 사용하세요
+# 요구사항
 
-**답변 형식**: 
-검색량이 ${volume.toLocaleString()}건으로 평균 대비 ${Math.abs(Math.round(growth))}% ${growth > 0 ? '상승' : '하락'}했습니다. [구체적인 원인 분석 2-3문장]`
+다음 내용을 **2-3문장**으로 작성하세요:
+
+1. **왜 이런 변화가 발생했는지** (계절, 이벤트, 사회 트렌드, 경쟁사 동향 등)
+2. **마케팅 팀이 활용할 수 있는 구체적인 액션** (프로모션 시기, 타겟 고객, 콘텐츠 전략 등)
+3. **다음 달 예상 트렌드**
+
+# 답변 형식
+
+검색량이 ${volume.toLocaleString()}건으로 평균 대비 ${Math.abs(Math.round(growth))}% 상승했습니다. [원인 1문장]. [마케팅 활용 방안 및 다음 달 예측 1-2문장].
+
+# 예시
+
+"검색량이 5,367,700건으로 평균 대비 461% 상승했습니다. 여름 휴가철과 7월 급여일이 겹치며 배달 음식 수요가 폭증한 것으로 분석됩니다. 이 시기에 할인 쿠폰과 세트 메뉴 프로모션을 집중하면 효과적이며, 8월에도 비슷한 패턴이 예상되므로 사전 재고 확보가 필요합니다."`
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -49,16 +62,28 @@ ${trendText}
         messages: [
           {
             role: 'system',
-            content: '당신은 네이버, 구글 등 포털 검색 데이터를 분석하는 시니어 마케팅 애널리스트입니다. 실제 데이터를 기반으로 정확하고 통찰력 있는 분석을 제공하며, 구체적인 숫자와 트렌드를 언급하여 신뢰성을 높입니다.',
+            content: `당신은 실전 마케팅 전략 컨설턴트입니다. 
+
+역할:
+- 검색 데이터를 분석하여 즉시 실행 가능한 마케팅 전략 제시
+- 계절성, 이벤트, 소비자 행동 패턴을 기반으로 원인 분석
+- 타겟 고객층 식별 및 맞춤형 액션 플랜 제공
+- 다음 달 트렌드 예측 및 대응 방안 제시
+
+답변 스타일:
+- 구체적인 숫자와 데이터 기반
+- 즉시 실행 가능한 액션 중심
+- 간결하고 명확한 2-3문장
+- 비즈니스 임팩트 중심`,
           },
           {
             role: 'user',
             content: prompt,
           },
         ],
-        reasoning_effort: 'medium',
+        reasoning_effort: 'high',
         verbosity: 'medium',
-        max_tokens: 500,
+        max_tokens: 600,
       }),
     })
     

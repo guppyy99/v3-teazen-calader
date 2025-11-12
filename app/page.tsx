@@ -31,7 +31,14 @@ export default function Page() {
   // 선택된 월의 상위 키워드 계산
   useEffect(() => {
     if (Object.keys(keywordData).length > 0) {
+      console.log(`키워드 재정렬: ${selectedYear}년 ${selectedMonth}월 기준`)
+      
       const growthData = calculateMonthlyGrowth(keywordData, selectedYear, selectedMonth)
+      
+      console.log('상위 5개 키워드:', growthData.slice(0, 5).map(
+        (item, idx) => `${idx + 1}. ${item.keyword} (+${item.growth.toFixed(1)}%)`
+      ))
+      
       const top = growthData.slice(0, 20).map(item => item.keyword)
       setTopKeywords(top)
       
