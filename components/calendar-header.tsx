@@ -1,7 +1,8 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import { ChevronLeft, ChevronRight, RotateCw } from "lucide-react"
+import { useState } from "react"
 
 interface CalendarHeaderProps {
   year: number
@@ -26,16 +27,33 @@ const months = [
 ]
 
 export function CalendarHeader({ year, month, onYearChange, onMonthChange }: CalendarHeaderProps) {
+  const [isRefreshing, setIsRefreshing] = useState(false)
   const currentDate = new Date()
   const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(currentDate.getDate()).padStart(2, "0")}`
   const formattedTime = `오후 ${currentDate.getHours() % 12 || 12}:${String(currentDate.getMinutes()).padStart(2, "0")}`
 
+  const handleRefresh = () => {
+    setIsRefreshing(true)
+    // 페이지 새로고침
+    window.location.reload()
+  }
+
   return (
     <div className="rounded-lg bg-white p-6 shadow-sm">
       <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-gray-800">Calander</h2>
-        <div className="text-sm text-gray-500">
-          {formattedDate} {formattedTime} ⟳ 데이터업데이트
+        <h2 className="text-xl font-semibold text-gray-800">혈당 캘린더</h2>
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-gray-500">
+            {formattedDate} {formattedTime}
+          </span>
+          <button
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+            className="flex items-center gap-1.5 rounded-lg bg-gray-100 px-3 py-1.5 text-sm text-gray-700 transition-all hover:bg-gray-200 disabled:opacity-50"
+          >
+            <RotateCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+            데이터 업데이트
+          </button>
         </div>
       </div>
 
