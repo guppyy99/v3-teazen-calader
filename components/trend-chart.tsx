@@ -203,8 +203,9 @@ export function TrendChart({ selectedKeywords, keywordData, timeRange, onTimeRan
               {selectedKeywords.map((keyword) => {
                 const keywordIdx = getKeywordIndex(keyword, allKeywords)
                 const color = getKeywordColor(keywordIdx).chart
+                const gradientId = `gradient-${keyword.replace(/\s/g, '-')}`
                 return (
-                  <linearGradient key={keyword} id={`gradient-${keyword}`} x1="0" y1="0" x2="0" y2="1">
+                  <linearGradient key={keyword} id={gradientId} x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor={color} stopOpacity={0.3} />
                     <stop offset="95%" stopColor={color} stopOpacity={0.05} />
                   </linearGradient>
@@ -233,6 +234,7 @@ export function TrendChart({ selectedKeywords, keywordData, timeRange, onTimeRan
             {selectedKeywords.map((keyword) => {
               const keywordIdx = getKeywordIndex(keyword, allKeywords)
               const color = getKeywordColor(keywordIdx).chart
+              const gradientId = `gradient-${keyword.replace(/\s/g, '-')}`
               return (
                 <Area
                   key={keyword}
@@ -240,7 +242,7 @@ export function TrendChart({ selectedKeywords, keywordData, timeRange, onTimeRan
                   dataKey={keyword}
                   stroke={color}
                   strokeWidth={2.5}
-                  fill={`url(#gradient-${keyword})`}
+                  fill={`url(#${gradientId})`}
                   fillOpacity={1}
                   dot={false}
                   activeDot={{ r: 6, fill: color }}

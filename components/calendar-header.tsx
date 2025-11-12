@@ -68,7 +68,7 @@ export function CalendarHeader({ year, month, onYearChange, onMonthChange }: Cal
               <button
                 key={m.value}
                 onClick={() => onMonthChange(m.value)}
-                className={`flex h-12 flex-1 items-center justify-center rounded-full text-sm font-medium transition-all ${
+                className={`flex h-[44px] flex-1 items-center justify-center rounded-full text-sm font-medium transition-all ${
                   month === m.value ? "bg-gray-800 text-white shadow-md" : "bg-gray-50 text-gray-600 hover:bg-gray-100"
                 }`}
               >

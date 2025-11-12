@@ -76,17 +76,21 @@ export function AIInsight({ selectedYear, selectedMonth, keywordData }: AIInsigh
 
   return (
     <div className="mt-6">
-      <h3 className="mb-4 text-lg font-semibold text-gray-800">AI 인사이트</h3>
-      <div className="rounded-2xl border-2 border-purple-200 bg-purple-50 px-6 py-5">
-        <div className="flex items-start gap-3">
-          <Sparkles className="mt-0.5 h-5 w-5 flex-shrink-0 text-purple-600" />
+      <h3 className="mb-4 text-xl font-semibold text-gray-800 text-center">AI 인사이트</h3>
+      <div className="rounded-full bg-white px-6 py-5 relative overflow-hidden">
+        {/* 그라데이션 테두리 */}
+        <div className="absolute inset-0 rounded-full p-[2px] bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400">
+          <div className="h-full w-full rounded-full bg-white" />
+        </div>
+        <div className="relative flex flex-col items-center gap-3">
+          <Sparkles className="h-5 w-5 flex-shrink-0 text-purple-600" />
           {loading ? (
             <div className="flex items-center gap-2">
               <div className="h-4 w-4 animate-spin rounded-full border-2 border-purple-600 border-t-transparent" />
               <p className="text-sm text-gray-600">AI 인사이트 생성 중...</p>
             </div>
           ) : (
-            <p className="text-sm leading-relaxed text-gray-800">
+            <p className="text-sm leading-relaxed text-gray-800 text-center">
               <span className="font-semibold">{topKeyword}</span> {insight}
             </p>
           )}
