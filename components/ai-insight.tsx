@@ -115,13 +115,19 @@ export function AIInsight({ selectedYear, selectedMonth, keywordData }: AIInsigh
           <button
             onClick={generateInsight}
             disabled={loading || Object.keys(keywordData).length === 0}
-            className="group relative flex items-center gap-2 rounded-full bg-gradient-to-r from-[#F2B0ED] to-[#CAB2F4] px-8 py-3.5 text-white font-semibold shadow-lg hover:shadow-2xl hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 overflow-hidden"
+            className="group relative flex items-center gap-2 rounded-full px-8 py-3.5 text-white font-semibold shadow-md hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 overflow-hidden"
+            style={{
+              background: 'linear-gradient(to right, #F2B0ED, #CAB2F4)'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'linear-gradient(to right, #E85DD7, #9D7DE8)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'linear-gradient(to right, #F2B0ED, #CAB2F4)'
+            }}
           >
-            {/* 호버 시 밝기 증가 오버레이 */}
-            <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
-            
-            <Sparkles className="h-5 w-5 relative z-10 group-hover:rotate-12 transition-transform duration-300" />
-            <span className="relative z-10">{selectedMonth}월 인사이트 생성</span>
+            <Sparkles className="h-5 w-5 group-hover:rotate-12 transition-transform duration-300" />
+            <span>{selectedMonth}월 인사이트 생성</span>
           </button>
         </div>
       ) : (
