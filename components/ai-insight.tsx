@@ -150,20 +150,37 @@ export function AIInsight({ selectedYear, selectedMonth, keywordData }: AIInsigh
                   <p className="text-sm text-gray-600">AI 인사이트 생성 중...</p>
                 </div>
               ) : (
-                <div className="text-center animate-in fade-in duration-700">
-                  <p className="text-base font-bold text-gray-900 mb-2">
+                <div className="text-center animate-in fade-in duration-700 max-w-4xl mx-auto">
+                  <p className="text-lg font-bold text-gray-900 mb-4 pb-3 border-b border-gray-200">
                     "{topKeyword}" 상승폭 가장 높음
                   </p>
-                  <p className="text-sm leading-relaxed text-gray-700">
-                    {insight}
-                  </p>
+                  <div className="text-left space-y-3">
+                    {insight.split('. ').map((sentence, idx) => {
+                      if (!sentence.trim()) return null
+                      
+                      // 첫 문장은 강조
+                      if (idx === 0) {
+                        return (
+                          <p key={idx} className="text-base font-semibold text-gray-900 leading-relaxed">
+                            📊 {sentence.trim()}.
+                          </p>
+                        )
+                      }
+                      
+                      return (
+                        <p key={idx} className="text-sm leading-relaxed text-gray-700 pl-6">
+                          • {sentence.trim()}{sentence.endsWith('.') ? '' : '.'}
+                        </p>
+                      )
+                    })}
+                  </div>
                   <button
                     onClick={() => {
                       setHasGenerated(false)
                       setInsight("")
                       setTopKeyword("")
                     }}
-                    className="mt-4 text-xs text-purple-600 hover:text-purple-700 underline transition-colors duration-200"
+                    className="mt-6 text-xs text-purple-600 hover:text-purple-700 underline transition-colors duration-200"
                   >
                     다시 생성
                   </button>
