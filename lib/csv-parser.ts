@@ -1,6 +1,40 @@
 import type { KeywordData, KeywordInfo } from "./types"
 
 /**
+ * 월 형식을 변환합니다 (Nov-21 → 2021-11)
+ */
+function convertMonthFormat(monthStr: string): string {
+  if (!monthStr) return ''
+  
+  // 이미 YYYY-MM 형식이면 그대로 반환
+  if (monthStr.match(/^\d{4}-\d{2}$/)) {
+    return monthStr
+  }
+  
+  // Nov-21 형식을 2021-11로 변환
+  const monthMap: Record<string, string> = {
+    'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04',
+    'May': '05', 'Jun': '06', 'Jul': '07', 'Aug': '08',
+    'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12'
+  }
+  
+  const parts = monthStr.split('-')
+  if (parts.length === 2) {
+    const monthName = parts[0]
+    const year = parts[1]
+    const monthNum = monthMap[monthName]
+    
+    if (monthNum && year) {
+      // 21 → 2021, 25 → 2025
+      const fullYear = parseInt(year) >= 50 ? `19${year}` : `20${year}`
+      return `${fullYear}-${monthNum}`
+    }
+  }
+  
+  return monthStr
+}
+
+/**
  * CSV 파일을 파싱하여 KeywordData 형식으로 변환합니다.
  */
 export async function parseCSV(): Promise<KeywordData> {
@@ -8,11 +42,21 @@ export async function parseCSV(): Promise<KeywordData> {
     const response = await fetch('/date-set-calendar.csv')
     const text = await response.text()
     
-    const lines = text.split('\n')
-    const headers = lines[0].split(',')
+    const lines = text.split('\n').filter(line => line.trim())
+    if (lines.length === 0) {
+      throw new Error('CSV 파일이 비어있습니다')
+    }
     
-    // 월별 데이터 컬럼 시작 인덱스 찾기 (2021-11부터 시작)
-    const monthStartIndex = headers.findIndex(h => h.includes('2021-11'))
+    const headers = lines[0].split(',').map(h => h?.trim() || '')
+    
+    // 월별 데이터 컬럼 시작 인덱스 찾기
+    const monthStartIndex = headers.findIndex(h => 
+      h.includes('2021-11') || h.includes('Nov-21') || h.includes('2021')
+    )
+    
+    if (monthStartIndex === -1) {
+      throw new Error('월별 데이터 컬럼을 찾을 수 없습니다')
+    }
     
     const keywordData: KeywordData = {}
     
@@ -21,7 +65,7 @@ export async function parseCSV(): Promise<KeywordData> {
       const line = lines[i].trim()
       if (!line) continue
       
-      const values = line.split(',')
+      const values = line.split(',').map(v => v?.trim() || '')
       const keyword = values[0]
       
       if (!keyword) continue
@@ -42,10 +86,16 @@ export async function parseCSV(): Promise<KeywordData> {
       
       // 월별 데이터
       const monthlyData: Record<string, number> = {}
-      for (let j = monthStartIndex; j < headers.length; j++) {
-        const monthKey = headers[j].trim()
+      for (let j = monthStartIndex; j < headers.length && j < values.length; j++) {
+        if (!headers[j]) continue
+        
+        const originalMonthKey = headers[j].trim()
+        const monthKey = convertMonthFormat(originalMonthKey)
         const value = parseInt(values[j]) || 0
-        monthlyData[monthKey] = value
+        
+        if (monthKey && value > 0) {
+          monthlyData[monthKey] = value
+        }
       }
       
       keywordData[keyword] = {
