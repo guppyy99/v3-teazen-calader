@@ -11,12 +11,12 @@ export function Footer() {
           <div className="flex items-center gap-3">
             <span className="text-xs text-gray-500">Powered by</span>
             <img 
-              src="/pentacle.svg" 
+              src="/PENTACLE_BLACK.svg" 
               alt="Pentacle" 
               className="h-5 opacity-70 hover:opacity-100 transition-opacity"
             />
             <img 
-              src="/finflow.svg" 
+              src="/FINFLOW_BLACK.svg" 
               alt="Finflow" 
               className="h-5 opacity-70 hover:opacity-100 transition-opacity"
             />
