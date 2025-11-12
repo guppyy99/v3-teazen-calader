@@ -5,6 +5,7 @@ import { CalendarHeader } from "@/components/calendar-header"
 import { AIInsight } from "@/components/ai-insight"
 import { KeywordSelector } from "@/components/keyword-selector"
 import { TrendChart } from "@/components/trend-chart"
+import { Footer } from "@/components/footer"
 import { parseCSV, calculateMonthlyGrowth } from "@/lib/csv-parser"
 import type { KeywordData } from "@/lib/types"
 
@@ -113,6 +114,8 @@ export default function Page() {
             selectedYear={selectedYear}
           />
         </div>
+
+        <Footer />
       </div>
     </main>
   )
