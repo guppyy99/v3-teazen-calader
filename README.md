@@ -58,10 +58,25 @@ pnpm install
 `.env.local` 파일을 생성하고 다음 내용을 추가하세요:
 
 ```bash
+# 필수: OpenAI API 키
 OPENAI_API_KEY=your-openai-api-key-here
+
+# 선택: Serper API 키 (실제 웹 검색 기반 인사이트)
+SERPER_API_KEY=your-serper-api-key-here
 ```
 
-OpenAI API 키는 [OpenAI 플랫폼](https://platform.openai.com/)에서 발급받을 수 있습니다.
+#### API 키 발급 방법
+
+**OpenAI API 키** (필수):
+- [OpenAI 플랫폼](https://platform.openai.com/)에서 발급
+- Settings > API Keys > Create new secret key
+
+**Serper API 키** (선택):
+- [Serper](https://serper.dev)에서 발급 (무료: 2,500 검색/월)
+- 실제 Google 검색 결과를 기반으로 더 정확한 AI 인사이트 생성
+- 최신 뉴스/이슈를 반영한 분석 제공
+
+자세한 설정 방법은 [SERPER_SETUP.md](./SERPER_SETUP.md)를 참조하세요.
 
 ### 4. 개발 서버 실행
 
