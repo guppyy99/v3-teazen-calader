@@ -1,7 +1,7 @@
 import type { KeywordData, KeywordInfo } from "./types"
 
 /**
- * 월 형식을 변환합니다 (Nov-21 → 2021-11)
+ * 월 형식을 변환합니다 (21-Nov → 2021-11)
  */
 function convertMonthFormat(monthStr: string): string {
   if (!monthStr) return ''
@@ -11,17 +11,17 @@ function convertMonthFormat(monthStr: string): string {
     return monthStr
   }
   
-  // Nov-21 형식을 2021-11로 변환
   const monthMap: Record<string, string> = {
     'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04',
     'May': '05', 'Jun': '06', 'Jul': '07', 'Aug': '08',
     'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12'
   }
   
+  // 21-Nov, 22-Jan, 25-Oct 등의 형식 처리
   const parts = monthStr.split('-')
   if (parts.length === 2) {
-    const monthName = parts[0]
-    const year = parts[1]
+    const year = parts[0]
+    const monthName = parts[1]
     const monthNum = monthMap[monthName]
     
     if (monthNum && year) {
@@ -49,12 +49,20 @@ export async function parseCSV(): Promise<KeywordData> {
     
     const headers = lines[0].split(',').map(h => h?.trim() || '')
     
-    // 월별 데이터 컬럼 시작 인덱스 찾기
-    const monthStartIndex = headers.findIndex(h => 
-      h.includes('2021-11') || h.includes('Nov-21') || h.includes('2021')
-    )
+    // 월별 데이터 컬럼 시작 인덱스 찾기 (21-Nov, 22-Jan 등)
+    const monthStartIndex = headers.findIndex(h => {
+      const trimmed = h.trim()
+      // 21-Nov, 22-Jan 같은 패턴 찾기
+      return /^\d{2}-(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)$/i.test(trimmed) ||
+             // 또는 YYYY-MM 패턴
+             /^\d{4}-\d{2}$/.test(trimmed)
+    })
+    
+    console.log('CSV 헤더 샘플:', headers.slice(0, 15))
+    console.log('월별 데이터 시작 인덱스:', monthStartIndex, '컬럼:', headers[monthStartIndex])
     
     if (monthStartIndex === -1) {
+      console.error('헤더 전체:', headers)
       throw new Error('월별 데이터 컬럼을 찾을 수 없습니다')
     }
     
